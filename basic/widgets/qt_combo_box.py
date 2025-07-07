@@ -11,40 +11,58 @@ class MainWindow(QMainWindow):
         self.setFixedSize(QSize(400, 100))
 
         # === Widgets ===
-        lb_drop_down = QLabel()
-        lb_drop_down.setText('Programming Language')
+        lb_dropdown = QLabel()
+        lb_dropdown.setText('Programming Language')
 
-        drop_down = QComboBox()
-        drop_down.addItems(['Python', 'Java', 'C++', 'JavaScript', 'Go'])
+        dropdown = QComboBox()
+        dropdown_items = ['Python', 'Java', 'C++', 'JavaScript', 'Go']
+        dropdown_items.sort()
+        dropdown.addItems(dropdown_items)
+        dropdown.setInsertPolicy(QComboBox.InsertPolicy.InsertAlphabetically)
+        dropdown.setEditable(True)
+        dropdown.setMaxCount(10)
 
-        lb = QLabel()
-        lb.setText('Programming Language Selected: ')
+        lb_text = QLabel()
+        lb_text.setText('Programming Language Selected: ')
 
-        lb_selection = QLabel()
-        lb_selection.setText(drop_down.currentText())
+        lb_text_selected = QLabel()
+        lb_text_selected.setText(dropdown.currentText())
+
+        lb_index = QLabel()
+        lb_index.setText('Programming Language Selected (Index): ')
+
+        self.lb_index_selected = QLabel()
+        self.lb_index_selected.setText(str(dropdown.currentIndex()))
 
         # === Signals ===
-        drop_down.currentTextChanged.connect(lb_selection.setText)
+        dropdown.currentTextChanged.connect(lb_text_selected.setText)
+        dropdown.currentIndexChanged.connect(self.setIndex)
 
         # === layouts ===
+        v_left_layout = QVBoxLayout()
+        v_left_layout.addWidget(lb_dropdown)
+        v_left_layout.addWidget(lb_text)
+        v_left_layout.addWidget(lb_index)
+
+        v_right_layout = QVBoxLayout()
+        v_right_layout.addWidget(dropdown)
+        v_right_layout.addWidget(lb_text_selected)
+        v_right_layout.addWidget(self.lb_index_selected)
+
         h_layout = QHBoxLayout()
-        h_layout.addWidget(lb_drop_down)
-        h_layout.addWidget(drop_down)
-
-        h_selection_layout = QHBoxLayout()
-        h_selection_layout.addWidget(lb)
-        h_selection_layout.addWidget(lb_selection)
-
-        v_layout = QVBoxLayout()
-        v_layout.addLayout(h_layout)
-        v_layout.addLayout(h_selection_layout)
+        h_layout.addLayout(v_left_layout)
+        h_layout.addLayout(v_right_layout)
 
         # container
         container = QWidget()
-        container.setLayout(v_layout)
+        container.setLayout(h_layout)
 
         # Set the central widget to the Main Window
         self.setCentralWidget(container)
+
+    # === slots ===
+    def setIndex(self, i : int):
+        self.lb_index_selected.setText(str(i))
 
 
 app = QApplication(sys.argv)
